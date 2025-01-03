@@ -21,57 +21,6 @@
       z-index: 0;
       pointer-events: none;
     }
-    .popup-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-    .popup {
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
-      animation: popupFade 0.5s ease-out;
-    }
-    .popup h2 {
-      margin: 0;
-      font-size: 24px;
-      color: #ffcc00;
-    }
-    .popup p {
-      margin: 10px 0 20px;
-      font-size: 16px;
-    }
-    .popup button {
-      background: #ffcc00;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    .popup button:hover {
-      background: #ffd633;
-    }
-    @keyframes popupFade {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
     .content {
       padding: 20px;
       text-align: center;
@@ -89,27 +38,49 @@
       background: #333;
       border-radius: 10px;
       display: flex;
-      flex-direction: column;
       align-items: center;
+      justify-content: space-between;
       padding: 15px;
       box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
-      cursor: pointer;
       transition: transform 0.2s, background 0.2s;
     }
     .bot-item:hover {
       background: #444;
       transform: scale(1.05);
     }
-    .bot-item img {
-      width: 80px;
-      height: 80px;
-      border-radius: 10px;
-      margin-bottom: 10px;
+    .bot-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .bot-item span {
-      display: block;
+    .bot-item img {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+    }
+    .bot-name {
       font-size: 16px;
       color: #ffcc00;
+    }
+    .copy-button {
+      width: 40px;
+      height: 40px;
+      background: #555;
+      border-radius: 10px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .copy-button:hover {
+      background: #666;
+    }
+    .copy-button svg {
+      fill: white;
+      width: 20px;
+      height: 20px;
     }
     .notifications {
       position: fixed;
@@ -133,11 +104,12 @@
     }
     .notification-bar {
       position: absolute;
-      bottom: 0;
-      left: 0;
+      bottom: 5px;
+      left: 5px;
+      right: 5px;
       height: 5px;
       background: white;
-      width: 100%;
+      border-radius: 5px;
       animation: shrinkBar 5s linear forwards;
     }
     @keyframes slideIn {
@@ -152,7 +124,7 @@
     }
     @keyframes shrinkBar {
       from {
-        width: 100%;
+        width: calc(100% - 10px);
       }
       to {
         width: 0%;
@@ -162,16 +134,9 @@
 </head>
 <body>
   <canvas id="snowCanvas"></canvas>
-  <div class="popup-overlay" id="popup">
-    <div class="popup">
-      <h2>This project is non-profit</h2>
-      <p>It would help a lot if you donate!</p>
-      <button onclick="closePopup()">Got it!</button>
-    </div>
-  </div>
   <div class="content">
     <h1>Fortnite Lobby Bots</h1>
-    <p>Click on a bot name to copy it to your clipboard.</p>
+    <p>Click the copy button to copy a bot's name to your clipboard.</p>
     <div class="bot-list" id="botList"></div>
     <div class="notifications" id="notifications"></div>
   </div>
@@ -232,9 +197,6 @@
       requestAnimationFrame(animate);
     }
     animate();
-    function closePopup() {
-      document.getElementById('popup').style.display = 'none';
-    }
     const bots = [
       { name: 'Bot1', icon: 'https://fortnite-api.com/images/cosmetics/br/Character_LeatherKey/icon.png' },
       { name: 'Bot2', icon: 'https://fortnite-api.com/images/cosmetics/br/Character_LeatherKey/icon.png' },
@@ -244,12 +206,25 @@
     bots.forEach(bot => {
       const botItem = document.createElement('div');
       botItem.className = 'bot-item';
-      botItem.innerHTML = `<img src="${bot.icon}" alt="${bot.name}"><span>${bot.name}</span>`;
-      botItem.onclick = () => {
+      const botInfo = document.createElement('div');
+      botInfo.className = 'bot-info';
+      const botIcon = document.createElement('img');
+      botIcon.src = bot.icon;
+      const botName = document.createElement('span');
+      botName.className = 'bot-name';
+      botName.textContent = bot.name;
+      const copyButton = document.createElement('button');
+      copyButton.className = 'copy-button';
+      copyButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm-1 12H5V4h10v9zM20 5h-2v9c0 1.1-.9 2-2 2H7v2h9c1.1 0 2 .9 2 2v2h2c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"/></svg>`;
+      copyButton.onclick = () => {
         navigator.clipboard.writeText(bot.name).then(() => {
           showNotification(`${bot.name} copied to clipboard!`);
         });
       };
+      botInfo.appendChild(botIcon);
+      botInfo.appendChild(botName);
+      botItem.appendChild(botInfo);
+      botItem.appendChild(copyButton);
       botList.appendChild(botItem);
     });
     function showNotification(message) {
@@ -258,8 +233,8 @@
       notification.innerHTML = `${message}<div class="notification-bar"></div>`;
       notifications.appendChild(notification);
       setTimeout(() => {
-        notification.style.opacity = 0;
-        setTimeout(() => notification.remove(), 500);
+        notification.style.opacity = '0';
+        setTimeout(() => notifications.removeChild(notification), 500);
       }, 5000);
     }
   </script>
