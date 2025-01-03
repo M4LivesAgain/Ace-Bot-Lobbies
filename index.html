@@ -29,7 +29,7 @@
     }
     .bot-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 20px;
       margin: 30px auto;
       max-width: 80%;
@@ -60,7 +60,7 @@
     }
     .bot-name {
       font-size: 16px;
-      color: #ffcc00;
+      color: #6effb9;
     }
     .copy-button {
       width: 40px;
@@ -104,7 +104,7 @@
     }
     .notification-bar {
       position: absolute;
-      bottom: 5px;
+      bottom: 0;
       left: 5px;
       right: 5px;
       height: 5px;
@@ -135,7 +135,7 @@
 <body>
   <canvas id="snowCanvas"></canvas>
   <div class="content">
-    <h1>Fortnite Lobby Bots</h1>
+    <h1 style="color: #6effb9;">Ace Bot Lobbies</h1>
     <p>Click the copy button to copy a bot's name to your clipboard.</p>
     <div class="bot-list" id="botList"></div>
     <div class="notifications" id="notifications"></div>
@@ -159,8 +159,8 @@
         this.speedX = speedX;
         this.speedY = speedY;
       }
-      update(mouseX) {
-        this.x += this.speedX + (mouseX - width / 2) * 0.0002;
+      update() {
+        this.x += this.speedX;
         this.y += this.speedY;
         if (this.x > width + this.radius) this.x = -this.radius;
         if (this.x < -this.radius) this.x = width + this.radius;
@@ -184,14 +184,10 @@
       }
     }
     generateSnowflakes(150);
-    let mouseX = width / 2;
-    window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-    });
     function animate() {
       ctx.clearRect(0, 0, width, height);
       snowflakes.forEach((flake) => {
-        flake.update(mouseX);
+        flake.update();
         flake.draw();
       });
       requestAnimationFrame(animate);
