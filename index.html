@@ -12,8 +12,6 @@
       color: white;
       overflow: hidden;
     }
-
-    /* Snowfall Canvas */
     #snowCanvas {
       position: fixed;
       top: 0;
@@ -23,8 +21,6 @@
       z-index: 0;
       pointer-events: none;
     }
-
-    /* Popup Styles */
     .popup-overlay {
       position: fixed;
       top: 0;
@@ -37,7 +33,6 @@
       align-items: center;
       z-index: 10;
     }
-
     .popup {
       background: #222;
       padding: 20px;
@@ -46,18 +41,15 @@
       box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
       animation: popupFade 0.5s ease-out;
     }
-
     .popup h2 {
       margin: 0;
       font-size: 24px;
       color: #ffcc00;
     }
-
     .popup p {
       margin: 10px 0 20px;
       font-size: 16px;
     }
-
     .popup button {
       background: #ffcc00;
       border: none;
@@ -67,11 +59,9 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-
     .popup button:hover {
       background: #ffd633;
     }
-
     @keyframes popupFade {
       from {
         opacity: 0;
@@ -82,50 +72,96 @@
         transform: scale(1);
       }
     }
-
-    /* Main Content */
     .content {
       padding: 20px;
       text-align: center;
       position: relative;
       z-index: 1;
     }
-
     .bot-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
       margin: 30px auto;
       max-width: 80%;
     }
-
     .bot-item {
       background: #333;
-      padding: 15px;
       border-radius: 10px;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
       box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
     }
-
     .bot-item:hover {
       background: #444;
       transform: scale(1.05);
     }
-
+    .bot-item img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
     .bot-item span {
       display: block;
       font-size: 16px;
       color: #ffcc00;
     }
+    .notifications {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+    }
+    .notification {
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      position: relative;
+      animation: slideIn 0.3s ease-out;
+      opacity: 1;
+      transition: opacity 0.5s ease, transform 0.3s ease;
+    }
+    .notification-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      background: white;
+      width: 100%;
+      animation: shrinkBar 5s linear forwards;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes shrinkBar {
+      from {
+        width: 100%;
+      }
+      to {
+        width: 0%;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Snowfall Canvas -->
   <canvas id="snowCanvas"></canvas>
-
-  <!-- Popup -->
   <div class="popup-overlay" id="popup">
     <div class="popup">
       <h2>This project is non-profit</h2>
@@ -133,31 +169,23 @@
       <button onclick="closePopup()">Got it!</button>
     </div>
   </div>
-
-  <!-- content -->
   <div class="content">
     <h1>Fortnite Lobby Bots</h1>
     <p>Click on a bot name to copy it to your clipboard.</p>
-    <div class="bot-list" id="botList">
-      <!-- bot names go here -->
-    </div>
+    <div class="bot-list" id="botList"></div>
+    <div class="notifications" id="notifications"></div>
   </div>
-
   <script>
-    // snowfall effect
     const canvas = document.getElementById('snowCanvas');
     const ctx = canvas.getContext('2d');
     let width, height;
     const snowflakes = [];
-
     function resizeCanvas() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     }
-
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
-
     class Snowflake {
       constructor(x, y, radius, speedX, speedY) {
         this.x = x;
@@ -166,16 +194,13 @@
         this.speedX = speedX;
         this.speedY = speedY;
       }
-
       update(mouseX) {
         this.x += this.speedX + (mouseX - width / 2) * 0.0002;
         this.y += this.speedY;
-
         if (this.x > width + this.radius) this.x = -this.radius;
         if (this.x < -this.radius) this.x = width + this.radius;
         if (this.y > height + this.radius) this.y = -this.radius;
       }
-
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -183,7 +208,6 @@
         ctx.fill();
       }
     }
-
     function generateSnowflakes(count) {
       for (let i = 0; i < count; i++) {
         const x = Math.random() * width;
@@ -194,15 +218,11 @@
         snowflakes.push(new Snowflake(x, y, radius, speedX, speedY));
       }
     }
-
     generateSnowflakes(150);
-
     let mouseX = width / 2;
-
     window.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
     });
-
     function animate() {
       ctx.clearRect(0, 0, width, height);
       snowflakes.forEach((flake) => {
@@ -211,27 +231,37 @@
       });
       requestAnimationFrame(animate);
     }
-
     animate();
-
     function closePopup() {
       document.getElementById('popup').style.display = 'none';
     }
-
-    const bots = ['Bot1', 'Bot2', 'Bot3', 'Bot4', 'Bot5'];
-
+    const bots = [
+      { name: 'Bot1', icon: 'https://fortnite-api.com/images/cosmetics/br/Character_LeatherKey/icon.png' },
+      { name: 'Bot2', icon: 'https://fortnite-api.com/images/cosmetics/br/Character_LeatherKey/icon.png' },
+    ];
     const botList = document.getElementById('botList');
+    const notifications = document.getElementById('notifications');
     bots.forEach(bot => {
       const botItem = document.createElement('div');
       botItem.className = 'bot-item';
-      botItem.innerHTML = `<span>${bot}</span>`;
+      botItem.innerHTML = `<img src="${bot.icon}" alt="${bot.name}"><span>${bot.name}</span>`;
       botItem.onclick = () => {
-        navigator.clipboard.writeText(bot).then(() => {
-          alert(`${bot} copied to clipboard!`);
+        navigator.clipboard.writeText(bot.name).then(() => {
+          showNotification(`${bot.name} copied to clipboard!`);
         });
       };
       botList.appendChild(botItem);
     });
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `${message}<div class="notification-bar"></div>`;
+      notifications.appendChild(notification);
+      setTimeout(() => {
+        notification.style.opacity = 0;
+        setTimeout(() => notification.remove(), 500);
+      }, 5000);
+    }
   </script>
 </body>
 </html>
