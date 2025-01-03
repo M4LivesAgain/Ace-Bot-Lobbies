@@ -172,6 +172,60 @@
       width: 20px;
       height: 20px;
     }
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .popup {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
+      animation: popupFade 0.5s ease-out;
+    }
+    .popup h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #6effb9;
+    }
+    .popup p {
+      margin: 10px 0 20px;
+      font-size: 16px;
+    }
+    .popup button {
+      background: #6effb9;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .popup button:hover {
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      transform: scale(1.1);
+    }
+    @keyframes popupFade {
+      from {
+        opacity: 0;
+	transition: transform 0.3s ease, background-color 0.3s ease;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+	transition: transform 0.3s ease, background-color 0.3s ease;
+        transform: scale(1);
+      }
+    }
   </style>
 </head>
 <body>
@@ -183,9 +237,16 @@
         <img src="https://avatars.githubusercontent.com/u/1965106?s=200&v=4" alt="Discord"> Discord
       </button>
     </div>
-    <p>You can add any bot by sending it a friend request. Not working? Ask the discord for help. <br><br> If a bot is in use, you will need to wait until the bot is available.</p>
+    <p>You can add any bot by sending it a friend request. Not working? Ask the discord for help. <br><br> If a bot is in use, you will need to wait until the bot is available.<br><p style="font-size: 32px; color: red;">BOTS COULD BE UNAVAILABLE FOR MAINTENANCE.</p></p>
     <div class="bot-list" id="botList"></div>
     <div class="notifications" id="notifications"></div>
+  </div>
+  <div class="popup-overlay" id="popup">
+    <div class="popup">
+      <h2>This project is non-profit</h2>
+      <p>It would help a lot if you donate!</p>
+      <button onclick="closePopup()">Got it!</button>
+    </div>
   </div>
   <script>
     const canvas = document.getElementById('snowCanvas');
@@ -240,6 +301,11 @@
       requestAnimationFrame(animate);
     }
     animate();
+
+    function closePopup() {
+      document.getElementById('popup').style.display = 'none';
+    }
+
     const bots = [
       { name: 'ACEBL.1', icon: 'https://fortnite-api.com/images/cosmetics/br/Character_LeatherKey/icon.png' },
       { name: 'ACEBL.2', icon: 'https://fortnite-api.com/images/cosmetics/br/Character_LeatherKey/icon.png' },
