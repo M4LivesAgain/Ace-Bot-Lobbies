@@ -130,13 +130,60 @@
         width: 0%;
       }
     }
+    .button-container {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .cool-button {
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .cool-button:hover {
+      background-color: #444;
+      transform: scale(1.1);
+    }
+    .discord-button {
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+      gap: 10px;
+      background-color: #5865f2;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .discord-button:hover {
+      transform: scale(1.1);
+    }
+    .discord-button img {
+      width: 20px;
+      height: 20px;
+    }
   </style>
 </head>
 <body>
   <canvas id="snowCanvas"></canvas>
   <div class="content">
     <h1 style="color: #6effb9;">Ace Bot Lobbies</h1>
-    <p>Add any available bot and ready up. Need help? Ask the discord.</p>
+    <div class="button-container">
+      <button class="discord-button" id="discordButton">
+        <img src="https://avatars.githubusercontent.com/u/1965106?s=200&v=4" alt="Discord"> Discord
+      </button>
+    </div>
+    <p>You can add any bot by sending it a friend request. Not working? Ask the discord for help. <br><br> If a bot is in use, you will need to wait until the bot is available.</p>
     <div class="bot-list" id="botList"></div>
     <div class="notifications" id="notifications"></div>
   </div>
@@ -234,6 +281,9 @@
         setTimeout(() => notifications.removeChild(notification), 500);
       }, 5000);
     }
+    document.getElementById('discordButton').onclick = () => {
+      window.open("https://discord.gg/SAFcP3Hnn9", "_blank");
+    };
   </script>
 </body>
 </html>
